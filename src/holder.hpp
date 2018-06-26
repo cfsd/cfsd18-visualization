@@ -45,12 +45,17 @@ class Holder{
         std::vector<opendlv::logic::perception::GroundSurfaceArea> getSurfaces();
 
     private:
+        void LidarToCoG(double &cogDistance,double &cogAngle);
         std::mutex m_surfaceMutex = {};
         std::mutex m_colorConeMutex = {};
         std::mutex m_attentionMutex = {};
         Eigen::MatrixXd m_colorcones = {};
         Eigen::MatrixXd m_attentionCones = {};
         std::vector<opendlv::logic::perception::GroundSurfaceArea> m_surfaces = {};
+
+        const double DEG2RAD = 0.017453292522222; // PI/180.0
+        const double RAD2DEG = 57.295779513082325; // 1.0 / DEG2RAD;
+        const double PI = 3.14159265;
 };
 
 #endif

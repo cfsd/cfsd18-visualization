@@ -62,12 +62,27 @@ void Holder::receiveAttention(std::map<int,ConePackage> currentFrame){
     while(it != currentFrame.end()){
         auto direction = std::get<0>(it->second);
         auto distance = std::get<1>(it->second);
-        m_attentionCones(0,coneIndex) = direction.azimuthAngle();
+        double cogDistance = distance.distance();
+        double cogAngle = direction.azimuthAngle();
+        LidarToCoG(cogDistance,cogAngle);
+        m_attentionCones(0,coneIndex) = cogAngle;
         m_attentionCones(1,coneIndex) = direction.zenithAngle();
-        m_attentionCones(2,coneIndex) = distance.distance();
+        m_attentionCones(2,coneIndex) = cogDistance;
         it++;
         coneIndex++;
     }
+}
+
+void Holder::LidarToCoG(double &cogDistance,double &cogAngle){
+  double angle = cogAngle;
+  double distance = cogDistance;
+  const double lidarDistToCoG = 1.5;
+  double sign = angle/std::fabs(angle);
+  angle = PI - std::fabs(angle*DEG2RAD); 
+  double distanceNew = std::sqrt(lidarDistToCoG*lidarDistToCoG + distance*distance - 2*lidarDistToCoG*distance*std::cos(angle));
+  double angleNew = std::asin((std::sin(angle)*distance)/distanceNew )*RAD2DEG; 
+  cogAngle = angleNew*sign;
+  cogDistance = distanceNew;
 }
 
 Eigen::MatrixXd Holder::getAttention(){
