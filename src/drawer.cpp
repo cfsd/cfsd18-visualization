@@ -90,7 +90,7 @@ void Drawer::drawFinalCones(opendlv::logic::perception::GroundSurfaceArea surfac
     double y4 = surface.y4()/5;
     glPointSize(5);
     glBegin(GL_POINTS);
-    if(y1>y2){
+    if(y1<y2){
         glColor4f(1.0,0.75f,0.0,1.0);//yellow
         glVertex3f(static_cast<float>(x1),static_cast<float>(y1),0.0f);
         glVertex3f(static_cast<float>(x3),static_cast<float>(y3),0.0f);
@@ -136,6 +136,17 @@ void Drawer::drawPath(opendlv::logic::perception::GroundSurfaceArea surface){
     y2 = (y3+y4)/2;
     glVertex3f(static_cast<float>(x1),static_cast<float>(y1),0.0f);
     glVertex3f(static_cast<float>(x2),static_cast<float>(y2),0.0f);
+    glEnd();
+}
+
+void Drawer::drawAimPoint(){
+    m_aimPoint = holder.getAimPoint();
+    //std::cout << "Aimpoint azimuth: " << m_aimPoint.azimuthAngle() <<", distance: " << m_aimPoint.distance() << std::endl;
+    Eigen::MatrixXd aimPoint = Spherical2Cartesian(m_aimPoint.azimuthAngle()*static_cast<double>(RAD2DEG),0.0,m_aimPoint.distance());
+    glPointSize(15);
+    glBegin(GL_POINTS);
+    glColor3f(0.0,1.0,0.0);
+    glVertex3f(static_cast<float>(aimPoint(0)/5),static_cast<float>(aimPoint(1)/5),0.0);
     glEnd();
 }
 

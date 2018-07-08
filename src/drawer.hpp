@@ -16,6 +16,7 @@ class Drawer{
         void drawAttention();
         void drawDetectCone();
         void drawSurfaces(bool,bool);
+        void drawAimPoint();
         void drawGraph();
 
     private:
@@ -23,10 +24,12 @@ class Drawer{
         std::vector<opendlv::logic::perception::GroundSurfaceArea> m_surfaces = {};
         Eigen::MatrixXd m_attentionCones = {};
         Eigen::MatrixXd m_colorCones = {};
+        opendlv::logic::action::AimPoint m_aimPoint = {};
         void drawPath(opendlv::logic::perception::GroundSurfaceArea surface);
         void drawFinalCones(opendlv::logic::perception::GroundSurfaceArea surface);
         Eigen::MatrixXd Spherical2Cartesian(double, double, double);
         const double DEG2RAD = 0.017453292522222; // PI/180.0
+        const double RAD2DEG = 1.0/0.017453292522222; // PI/180.0
 
 };
 #endif

@@ -56,7 +56,7 @@ int32_t main(int32_t argc, char **argv) {
     uint32_t detectconeStamp = (commandlineArguments.count("detectConeId")>0)?(static_cast<uint32_t>(std::stoi(commandlineArguments["detectConeId"]))):(118);// 118 is default
     uint32_t attentionStamp = (commandlineArguments.count("attentionId")>0)?(static_cast<uint32_t>(std::stoi(commandlineArguments["attentionId"]))):(116);// 118 is default
     uint32_t detectconelaneStamp = (commandlineArguments.count("detectConeLaneId")>0)?(static_cast<uint32_t>(std::stoi(commandlineArguments["detectConeLaneId"]))):(211);// 118 is default
-
+    uint32_t trackStamp = (commandlineArguments.count("trackId")>0)?(static_cast<uint32_t>(std::stoi(commandlineArguments["detectConeLaneId"]))):(221);
     auto coneEnvelope{[detectconeStamp,attentionStamp,&detectConeCollector,&attentionCollector](cluon::data::Envelope &&envelope)
       {
         if(envelope.senderStamp() == detectconeStamp){
@@ -74,10 +74,19 @@ int32_t main(int32_t argc, char **argv) {
         }
       }
     };
+
+    auto aimPointEnvelope{[senderStamp = trackStamp,&holder](cluon::data::Envelope &&envelope)
+      {
+        if(envelope.senderStamp() == senderStamp){
+          holder.receiveAimPoint(envelope);
+        }
+      }
+    };
     od4.dataTrigger(opendlv::logic::perception::ObjectDirection::ID(),coneEnvelope);
     od4.dataTrigger(opendlv::logic::perception::ObjectDistance::ID(),coneEnvelope);
     od4.dataTrigger(opendlv::logic::perception::ObjectType::ID(),coneEnvelope);
     od4.dataTrigger(opendlv::logic::perception::GroundSurfaceArea::ID(),surfaceEnvelope);
+    od4.dataTrigger(opendlv::logic::action::AimPoint::ID(),aimPointEnvelope);
 
     // Just sleep as this microservice is data driven.
     using namespace std::literals::chrono_literals;

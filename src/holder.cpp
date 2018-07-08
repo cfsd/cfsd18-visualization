@@ -73,6 +73,11 @@ void Holder::receiveAttention(std::map<int,ConePackage> currentFrame){
     }
 }
 
+void Holder::receiveAimPoint(cluon::data::Envelope data){
+    std::lock_guard<std::mutex> lock(m_aimPointMutex);
+    m_aimPoint = cluon::extractMessage<opendlv::logic::action::AimPoint>(std::move(data));
+}
+
 void Holder::LidarToCoG(double &cogDistance,double &cogAngle){
   double angle = cogAngle;
   double distance = cogDistance;
@@ -98,4 +103,9 @@ Eigen::MatrixXd Holder::getDetectCone(){
 std::vector<opendlv::logic::perception::GroundSurfaceArea> Holder::getSurfaces(){
     std::lock_guard<std::mutex> lock(m_surfaceMutex);
     return m_surfaces;
+}
+
+opendlv::logic::action::AimPoint Holder::getAimPoint(){
+    std::lock_guard<std::mutex> lock(m_aimPointMutex);
+    return m_aimPoint;
 }

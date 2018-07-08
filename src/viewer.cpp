@@ -25,6 +25,7 @@ void Viewer::Run(){
     pangolin::Var<bool> menuShowAttention("menu.ShowAttention",true,true);
     pangolin::Var<bool> menuShowDetectCones("menu.ShowDetectCones",true,true);
     pangolin::Var<bool> menuShowSurfaces("menu.ShowSurfaces",true,true);
+    pangolin::Var<bool> menuShowAimpoint("menu.ShowAimPoint",true,true);
     pangolin::Var<bool> menuExit("menu.Exit",false,false);
 
     pangolin::OpenGlRenderState s_cam(
@@ -50,6 +51,8 @@ void Viewer::Run(){
             m_drawer.drawDetectCone();
         if(menuShowSurfaces)
             m_drawer.drawSurfaces(true,true);
+        if(menuShowAimpoint)
+            m_drawer.drawAimPoint();
         pangolin::FinishFrame();
         if(menuExit)
             break;
