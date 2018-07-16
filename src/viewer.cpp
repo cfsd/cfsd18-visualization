@@ -9,7 +9,7 @@
 
 Viewer::Viewer(std::map<std::string,std::string> commandlineArgs, Drawer &drawer)
 : m_drawer(drawer){
-    std::cout << commandlineArgs.count("cid") << std::endl;    
+    std::cout << commandlineArgs.count("cid") << std::endl;
 }
 
 void Viewer::Run(){
@@ -26,13 +26,14 @@ void Viewer::Run(){
     pangolin::Var<bool> menuShowDetectCones("menu.ShowDetectCones",true,true);
     pangolin::Var<bool> menuShowSurfaces("menu.ShowSurfaces",true,true);
     pangolin::Var<bool> menuShowAimpoint("menu.ShowAimPoint",true,true);
+    pangolin::Var<bool> menuShowLocalAimpoint("menu.ShowLocalAimPoint",true,true);
     pangolin::Var<bool> menuExit("menu.Exit",false,false);
 
     pangolin::OpenGlRenderState s_cam(
                 pangolin::ProjectionMatrix(1024,768,2000,2000,512,389,0.1,1000),
                 pangolin::ModelViewLookAt(0,-10,10, 0,0,0,1.0,0.0, 0.0)
                 );
-    
+
     pangolin::View& d_cam = pangolin::CreateDisplay()
             .SetBounds(0.0, 1.0, pangolin::Attach::Pix(175), 1.0, -1024.0f/768.0f)
             .SetHandler(new pangolin::Handler3D(s_cam));
@@ -53,6 +54,8 @@ void Viewer::Run(){
             m_drawer.drawSurfaces(true,true);
         if(menuShowAimpoint)
             m_drawer.drawAimPoint();
+        if(menuShowLocalAimpoint)
+            m_drawer.drawLocalAimPoint();
         pangolin::FinishFrame();
         if(menuExit)
             break;

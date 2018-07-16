@@ -77,15 +77,19 @@ void Holder::receiveAimPoint(cluon::data::Envelope data){
     std::lock_guard<std::mutex> lock(m_aimPointMutex);
     m_aimPoint = cluon::extractMessage<opendlv::logic::action::AimPoint>(std::move(data));
 }
+void Holder::receiveLocalAimPoint(cluon::data::Envelope data){
+    std::lock_guard<std::mutex> lock(m_localAimPointMutex);
+    m_localAimPoint = cluon::extractMessage<opendlv::logic::action::AimPoint>(std::move(data));
+}
 
 void Holder::LidarToCoG(double &cogDistance,double &cogAngle){
   double angle = cogAngle;
   double distance = cogDistance;
   const double lidarDistToCoG = 1.5;
   double sign = angle/std::fabs(angle);
-  angle = PI - std::fabs(angle*DEG2RAD); 
+  angle = PI - std::fabs(angle*DEG2RAD);
   double distanceNew = std::sqrt(lidarDistToCoG*lidarDistToCoG + distance*distance - 2*lidarDistToCoG*distance*std::cos(angle));
-  double angleNew = std::asin((std::sin(angle)*distance)/distanceNew )*RAD2DEG; 
+  double angleNew = std::asin((std::sin(angle)*distance)/distanceNew )*RAD2DEG;
   cogAngle = angleNew*sign;
   cogDistance = distanceNew;
 }
@@ -108,4 +112,9 @@ std::vector<opendlv::logic::perception::GroundSurfaceArea> Holder::getSurfaces()
 opendlv::logic::action::AimPoint Holder::getAimPoint(){
     std::lock_guard<std::mutex> lock(m_aimPointMutex);
     return m_aimPoint;
+}
+
+opendlv::logic::action::AimPoint Holder::getLocalAimPoint(){
+    std::lock_guard<std::mutex> lock(m_localAimPointMutex);
+    return m_localAimPoint;
 }

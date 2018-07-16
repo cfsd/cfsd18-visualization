@@ -33,18 +33,20 @@
 typedef std::tuple<opendlv::logic::perception::ObjectDirection,opendlv::logic::perception::ObjectDistance,opendlv::logic::perception::ObjectType> ConePackage;
 
 class Holder{
-    public: 
+    public:
         Holder();
         ~Holder() = default;
         void receiveSurfaceMessage(std::map<int,opendlv::logic::perception::GroundSurfaceArea>);
         void receiveDetectCone(std::map<int,ConePackage> currentFrame);
         void receiveAttention(std::map<int,ConePackage> currentFrame);
         void receiveAimPoint(cluon::data::Envelope);
+        void receiveLocalAimPoint(cluon::data::Envelope);
 
         Eigen::MatrixXd getAttention();
         Eigen::MatrixXd getDetectCone();
         std::vector<opendlv::logic::perception::GroundSurfaceArea> getSurfaces();
         opendlv::logic::action::AimPoint getAimPoint();
+        opendlv::logic::action::AimPoint getLocalAimPoint();
 
     private:
         void LidarToCoG(double &cogDistance,double &cogAngle);
@@ -52,10 +54,12 @@ class Holder{
         std::mutex m_colorConeMutex = {};
         std::mutex m_attentionMutex = {};
         std::mutex m_aimPointMutex = {};
+        std::mutex m_localAimPointMutex = {};
         Eigen::MatrixXd m_colorcones = {};
         Eigen::MatrixXd m_attentionCones = {};
         std::vector<opendlv::logic::perception::GroundSurfaceArea> m_surfaces = {};
         opendlv::logic::action::AimPoint m_aimPoint = {};
+        opendlv::logic::action::AimPoint m_localAimPoint = {};
 
         const double DEG2RAD = 0.017453292522222; // PI/180.0
         const double RAD2DEG = 57.295779513082325; // 1.0 / DEG2RAD;

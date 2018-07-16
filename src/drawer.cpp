@@ -12,7 +12,7 @@ void Drawer::drawAttention(){
     m_attentionCones = holder.getAttention();
     uint32_t nPoints = static_cast<unsigned int>(m_attentionCones.cols());
     if(nPoints == 0){
-        return; 
+        return;
     }
     glPointSize(10);
     glBegin(GL_POINTS);
@@ -32,7 +32,7 @@ void Drawer::drawDetectCone(){
     m_colorCones = holder.getDetectCone();
     uint32_t nPoints = static_cast<unsigned int>(m_colorCones.cols());
     if(nPoints == 0){
-        return; 
+        return;
     }
     glPointSize(15);
     glBegin(GL_POINTS);
@@ -71,7 +71,7 @@ void Drawer::drawSurfaces(bool finalCones,bool path){
     }
     for(uint32_t i = 0; i < nSurfaces; i++){
         if(finalCones){
-            drawFinalCones(m_surfaces[i]);    
+            drawFinalCones(m_surfaces[i]);
         }
         if(path){
             drawPath(m_surfaces[i]);
@@ -122,10 +122,14 @@ void Drawer::drawPath(opendlv::logic::perception::GroundSurfaceArea surface){
     double y2 = surface.y2()/5;
     double y3 = surface.y3()/5;
     double y4 = surface.y4()/5;
-    glPointSize(15);
-    glBegin(GL_POINTS);
-    glColor3f(1.0,0.0,0.0);
-    glVertex3f(0.0,0.0,0.0);
+    //glPointSize(15);
+    glBegin(GL_POLYGON);
+    glColor4f(0.5f,0.5f,0.5f,1.0f);
+    glLineWidth(5);
+    glVertex3f(-0.65f/5.0f, -1.0f/5.0f,0.0f);
+    glVertex3f(0.65f/5.0f, -1.0f/5.0f,0.0f);
+    glVertex3f(0.65f/5.0f, 1.0f/5.0f,0.0f);
+    glVertex3f(-0.65f/5.0f, 1.0f/5.0f,0.0f);
     glEnd();
     glLineWidth(2);
     glColor4f(0.5f,0.5f,0.5f,1.0f);
@@ -143,10 +147,31 @@ void Drawer::drawAimPoint(){
     m_aimPoint = holder.getAimPoint();
     //std::cout << "Aimpoint azimuth: " << m_aimPoint.azimuthAngle() <<", distance: " << m_aimPoint.distance() << std::endl;
     Eigen::MatrixXd aimPoint = Spherical2Cartesian(m_aimPoint.azimuthAngle()*static_cast<double>(RAD2DEG),0.0,m_aimPoint.distance());
-    glPointSize(15);
+    glPointSize(10);
     glBegin(GL_POINTS);
     glColor3f(0.0,1.0,0.0);
     glVertex3f(static_cast<float>(aimPoint(0)/5),static_cast<float>(aimPoint(1)/5),0.0);
+    glEnd();
+    glBegin(GL_LINES);
+    glColor3f(0.0,1.0,0.0);
+    glVertex3f(static_cast<float>(aimPoint(0)/5),static_cast<float>(aimPoint(1)/5),0.0);
+    glVertex3f(0.0,0.0,0.0);
+    glEnd();
+
+}
+void Drawer::drawLocalAimPoint(){
+    m_localAimPoint = holder.getLocalAimPoint();
+    //std::cout << "Aimpoint azimuth: " << m_aimPoint.azimuthAngle() <<", distance: " << m_aimPoint.distance() << std::endl;
+    Eigen::MatrixXd aimPoint = Spherical2Cartesian(m_localAimPoint.azimuthAngle()*static_cast<double>(RAD2DEG),0.0,m_localAimPoint.distance());
+    glPointSize(10);
+    glBegin(GL_POINTS);
+    glColor3f(1.0,0.0,0.0);
+    glVertex3f(static_cast<float>(aimPoint(0)/5),static_cast<float>(aimPoint(1)/5),0.0);
+    glEnd();
+    glBegin(GL_LINES);
+    glColor3f(1.0,0.0,0.0);
+    glVertex3f(static_cast<float>(aimPoint(0)/5),static_cast<float>(aimPoint(1)/5),0.0);
+    glVertex3f(0.0,0.0,0.0);
     glEnd();
 }
 

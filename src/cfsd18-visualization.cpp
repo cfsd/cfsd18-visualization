@@ -47,16 +47,17 @@ int32_t main(int32_t argc, char **argv) {
     Holder holder;
     Drawer drawer(commandlineArguments,holder);
     Viewer viewer(commandlineArguments,drawer);
-    std::thread viewThread (&Viewer::Run,viewer); 
+    std::thread viewThread (&Viewer::Run,viewer);
     int gatheringTimeMs = (commandlineArguments.count("gatheringTimeMs")>0)?(std::stoi(commandlineArguments["gatheringTimeMs"])):(30);
     int separationTimeMs = (commandlineArguments.count("separationTimeMs")>0)?(std::stoi(commandlineArguments["separationTimeMs"])):(5);
     Collector attentionCollector(holder,gatheringTimeMs,separationTimeMs,2);
     Collector detectConeCollector(holder,gatheringTimeMs,separationTimeMs,3);
     SurfaceCollector surfaceCollector(holder,gatheringTimeMs,separationTimeMs,1);
-    uint32_t detectconeStamp = (commandlineArguments.count("detectConeId")>0)?(static_cast<uint32_t>(std::stoi(commandlineArguments["detectConeId"]))):(118);// 118 is default
-    uint32_t attentionStamp = (commandlineArguments.count("attentionId")>0)?(static_cast<uint32_t>(std::stoi(commandlineArguments["attentionId"]))):(116);// 118 is default
-    uint32_t detectconelaneStamp = (commandlineArguments.count("detectConeLaneId")>0)?(static_cast<uint32_t>(std::stoi(commandlineArguments["detectConeLaneId"]))):(211);// 118 is default
-    uint32_t trackStamp = (commandlineArguments.count("trackId")>0)?(static_cast<uint32_t>(std::stoi(commandlineArguments["detectConeLaneId"]))):(221);
+    uint32_t detectconeStamp = (commandlineArguments.count("detectConeId")>0)?(static_cast<uint32_t>(std::stoi(commandlineArguments["detectConeId"]))):(118);
+    uint32_t attentionStamp = (commandlineArguments.count("attentionId")>0)?(static_cast<uint32_t>(std::stoi(commandlineArguments["attentionId"]))):(116);
+    uint32_t detectconelaneStamp = (commandlineArguments.count("detectConeLaneId")>0)?(static_cast<uint32_t>(std::stoi(commandlineArguments["detectConeLaneId"]))):(211);
+    uint32_t trackStamp = (commandlineArguments.count("trackId")>0)?(static_cast<uint32_t>(std::stoi(commandlineArguments["trackId"]))):(221);
+    uint32_t localTrackStamp = (commandlineArguments.count("localTrackId")>0)?(static_cast<uint32_t>(std::stoi(commandlineArguments["localTrackId"]))):(666);
     auto coneEnvelope{[detectconeStamp,attentionStamp,&detectConeCollector,&attentionCollector](cluon::data::Envelope &&envelope)
       {
         if(envelope.senderStamp() == detectconeStamp){
@@ -75,10 +76,13 @@ int32_t main(int32_t argc, char **argv) {
       }
     };
 
-    auto aimPointEnvelope{[senderStamp = trackStamp,&holder](cluon::data::Envelope &&envelope)
+    auto aimPointEnvelope{[trackStamp,localTrackStamp,&holder](cluon::data::Envelope &&envelope)
       {
-        if(envelope.senderStamp() == senderStamp){
+        if(envelope.senderStamp() == trackStamp){
           holder.receiveAimPoint(envelope);
+        }
+        if(envelope.senderStamp() == localTrackStamp){
+          holder.receiveLocalAimPoint(envelope);
         }
       }
     };
