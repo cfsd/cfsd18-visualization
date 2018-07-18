@@ -55,10 +55,14 @@ int32_t main(int32_t argc, char **argv) {
     SurfaceCollector surfaceCollector(holder,gatheringTimeMs,separationTimeMs,1);
     uint32_t detectconeStamp = (commandlineArguments.count("detectConeId")>0)?(static_cast<uint32_t>(std::stoi(commandlineArguments["detectConeId"]))):(118);// 118 is default
     uint32_t attentionStamp = (commandlineArguments.count("attentionId")>0)?(static_cast<uint32_t>(std::stoi(commandlineArguments["attentionId"]))):(116);// 118 is default
+    uint32_t slamStamp = (commandlineArguments.count("slamId")>0)?(static_cast<uint32_t>(std::stoi(commandlineArguments["slamId"]))):(120);
     uint32_t detectconelaneStamp = (commandlineArguments.count("detectConeLaneId")>0)?(static_cast<uint32_t>(std::stoi(commandlineArguments["detectConeLaneId"]))):(211);// 118 is default
     uint32_t trackStamp = (commandlineArguments.count("trackId")>0)?(static_cast<uint32_t>(std::stoi(commandlineArguments["detectConeLaneId"]))):(221);
-    auto coneEnvelope{[detectconeStamp,attentionStamp,&detectConeCollector,&attentionCollector](cluon::data::Envelope &&envelope)
+    auto coneEnvelope{[&detectconeStamp,attentionStamp,slamStamp,&detectConeCollector,&attentionCollector](cluon::data::Envelope &&envelope)
       {
+        if(envelope.senderStamp() == slamStamp){
+          detectconeStamp = slamStamp;
+        }
         if(envelope.senderStamp() == detectconeStamp){
           detectConeCollector.CollectCones(envelope);
         }
